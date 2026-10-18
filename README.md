@@ -1,55 +1,67 @@
-# Sobriety
+# Sobriety (fork)
 
-## What Is Sobriety?
+Sobriety is a simple, minimal app to track how long you've been sober from anything you
+want. It tells you how long it's been since you logged a relapse, and the average time
+between your most recent relapses, so that you have more input with which to work on
+recovery.
 
-Sobriety is a simple and minimal app to track how long you've been sober from anything you want. It'll tell you how long it's been since you logged a relapse, and the average time between your three most recent relapses, so that you have more input with which to work on recovery. Sobriety has no trackers, and runs completely on your device, and every feature is completely free.
+This repository is a personal **fork** of
+[KiARC/Sobriety](https://github.com/KiARC/Sobriety). The app, its design, and its story
+belong entirely to [KiARC](https://github.com/KiARC) and the upstream contributors. This
+fork exists to add a handful of quality-of-life improvements for personal use — it is
+not a remake or a rebrand, and the hope is that some of these changes can go upstream.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/com.katiearose.sobriety/)
+## What this fork adds
 
-or get the APK from the [Releases section](https://github.com/KiARC/Sobriety/releases/latest).
+Small, focused improvements only:
 
-## Sobriety's Story
+- **Log a relapse at a previous date/time** instead of only "now"
+- **Rename addictions** at any time
+- **Multiple daily notes per day**, grouped by day, with collapse/expand
+- **Search** across daily notes
+- **Summary insights**: longest streak and total clean time
+- **"Track now" accepts a previous date/time** (for stopped and future addictions)
+- **Safer import/export**: merge or replace, with an automatic backup before changes
+- **Data safety**: atomic cache writes, and recovery from a `.bak` backup if the
+  cache is ever corrupt
+- **Crash fixes**: invalid savings and milestone amounts no longer crash; milestone
+  lists are diffed correctly
+- **Visual polish**: clearer typography hierarchy, card layout and theme contrast
+  (including Material You)
 
-I mostly designed this out of spite for I Am Sober, which monetizes addiction recovery. This started as something I just wrote in the time I had between classes for a friend who was struggling with addiction and couldn't get an I Am Sober subscription to track all the things he was struggling with, and I really just decided to publish it because I didn't see a reason not to, but then it got picked up by the IzzyOnDroid repository and I decided it was genuinely going to be worth working on further if people were actually aware of it. Since then a lot of tweaks have been made and the amazing *JakeGonder* has helped out quite a bit, and I am honestly super proud of how far this has come. Recently (as of writing this),  Donnnno, the creator of [the impressive Arcticons icon pack](https://github.com/Donnnno/Arcticons) has added a Sobriety icon, and I am over the moon with pride for the recognition. I hope Sobriety is able to help more people, and I will continue to work on it when I'm able to because I want to see it grow.
+## What stays the same
 
-Since writing this, the incredible *cubandle* and *unbiaseduser* have contributed quite a lot, and I'm really grateful for that.
+- 100% offline: no network permission, no trackers, no accounts, no analytics
+- Every feature free
+- Your data stays on your device
+- Same package id, and it reads existing Sobriety data files
 
-### About I Am Sober
+## Upstream
 
-I'm only half joking when I say I hate I Am Sober. [It has several trackers and requires far more permissions than is reasonable for the features it provides](https://reports.exodus-privacy.eu.org/en/reports/com.thehungrywasp.iamsober/latest/), and the fact that a subscription is required to track more than two individual addictions is just horrific to me. Displaying the time since a given date, and allowing that date to be reset to the current time, are such simple features to implement that I genuinely cannot fathom how they can in good conscience monetize them, especially when their target audience is *people struggling with addiction*. I just find the whole concept somewhat upsetting. For that reason, Sobriety will never have any trackers or anything of the sort, and will always be completely free. I want to help people, not profit off of their struggles.
+The original app is maintained by KiARC and published on F-Droid:
 
-## Developer Contact Info
-- Here on GitHub, via Issues, Discussions, etc
-- My personal email address (katiearose@pm.me)
+https://f-droid.org/packages/com.katiearose.sobriety/
 
-Feel free to contact me about any issues, suggestions or comments you have about Sobriety!
+This fork is not published on F-Droid. Builds of this fork are signed with a different
+key and are intended for personal testing and, hopefully, contribution back upstream.
 
-# Repository Metadata (via Shields.io)
-## Core
-[![License](https://img.shields.io/github/license/KiARC/Sobriety?style=for-the-badge&color=success)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/KiARC/Sobriety/ci.yml?branch=master&style=for-the-badge)](https://github.com/KiARC/Sobriety/actions/workflows/ci.yml?query=branch%3Amaster)
-[![Maintenance](https://img.shields.io/maintenance/yes/2023?style=for-the-badge)](https://github.com/KiARC/Sobriety)
-## Size
-[![GitHub code size](https://img.shields.io/github/languages/code-size/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety)
-[![GitHub repo size](https://img.shields.io/github/repo-size/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety)
-## Release Info
-[![GitHub all releases](https://img.shields.io/github/downloads/KiARC/Sobriety/total?style=for-the-badge&label=Downloads%20%28All%20Releases%29?)](https://github.com/KiARC/Sobriety/releases)
-[![GitHub downloads by release (latest by date)](https://img.shields.io/github/downloads/KiARC/Sobriety/latest/total?style=for-the-badge&label=Downloads%20%28Latest%20Release%29?)](https://github.com/KiARC/Sobriety/releases/latest)
+## Building
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/KiARC/Sobriety?label=Latest%20Release&sort=semver&style=for-the-badge)](https://github.com/KiARC/Sobriety/releases/latest)
-[![GitHub Release Date](https://img.shields.io/github/release-date/KiARC/Sobriety?label=Latest%20Release%20Date&style=for-the-badge&sort=semver)](https://github.com/KiARC/Sobriety/releases/latest)
-[![F-Droid](https://img.shields.io/f-droid/v/com.katiearose.sobriety?style=for-the-badge)](https://f-droid.org/en/packages/com.katiearose.sobriety/)
-## Issue Counts
-[![GitHub open issues](https://img.shields.io/github/issues-raw/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/issues)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/issues?q=is%3Aissue+is%3Aclosed)
-## PR Counts
-[![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/pulls)
-[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/pulls?q=is%3Apr+is%3Aclosed)
-## Stats
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/w/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/graphs/commit-activity)
-[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/KiARC/Sobriety/latest?style=for-the-badge)](https://github.com/KiARC/Sobriety/graphs/commit-activity)
+The project uses Gradle 7.5 and Android Gradle Plugin 7.3.1, which require JDK 17.
 
-[![GitHub contributors](https://img.shields.io/github/contributors/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/graphs/contributors)
-[![GitHub Discussions](https://img.shields.io/github/discussions/KiARC/Sobriety?style=for-the-badge)](https://github.com/KiARC/Sobriety/discussions)
+Debug build:
+
+```
+./gradlew :app:assembleDebug
+```
+
+Release build (produced unsigned by Gradle; sign with your own key before installing):
+
+```
+./gradlew :app:assembleRelease
+```
+
+## License
+
+GPL-3.0 — same as upstream. See [LICENSE](LICENSE). All credit for the original project
+goes to KiARC and its contributors.
