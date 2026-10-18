@@ -10,9 +10,10 @@ between your most recent relapses, so you have more to work with in recovery.
 This is a **standalone fork** of
 [seaglade/Sobriety](https://github.com/seaglade/Sobriety). The app, its design, and its
 story belong entirely to [seaglade](https://github.com/seaglade) and the upstream
-contributors. The original app can no longer publish updates (its release signing key
-was lost), so this fork serves as the maintained, buildable continuation — signed APKs
-are published on the [Releases page](https://github.com/scar-09/Sobriety/releases).
+contributors. The original app's maintainer confirmed in
+[this PR thread](https://github.com/seaglade/Sobriety/pull/118#issuecomment-6249704536)
+that she can't publish new builds, so this fork provides them — signed APKs are
+published on the [Releases page](https://github.com/scar-09/Sobriety/releases).
 
 *Last updated: 18 October 2026*
 
