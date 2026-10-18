@@ -141,6 +141,10 @@
     <string name="data">Data</string>
     <string name="data_export">Export</string>
     <string name="data_import">Import</string>
+    <string name="import_title">Import data</string>
+    <string name="import_merge">Merge (skip duplicates)</string>
+    <string name="import_replace">Replace existing data</string>
+    <string name="import_empty_file">No habits found in the file</string>
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="report_an_issue">Report an issue</string>
