@@ -42,8 +42,9 @@ class ProgressBarAdapter(
 
     fun update() {
         val list = convertRangeToPercentList(addiction.history.keys.last())
-        // Filter initial zeros
-        submitList(list.subList(list.indexOfFirst { it.first != 0 }, list.size))
+        // Filter initial zeros; if every entry is zero, show an empty list
+        val firstNonZero = list.indexOfFirst { it.first != 0 }
+        submitList(if (firstNonZero == -1) emptyList() else list.subList(firstNonZero, list.size))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressBarViewHolder {
