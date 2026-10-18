@@ -35,10 +35,17 @@ object AddictionSerializer : KSerializer<Addiction> {
             while (true) {
                 when (val i = decodeElementIndex(descriptor)) {
                     0 -> name = decodeStringElement(descriptor, i)
-                    1 -> status = Addiction.Status.valueOf(decodeStringElement(descriptor, i))
+                    1 -> {
+                        val statusStr = decodeStringElement(descriptor, i)
+                        status = runCatching { Addiction.Status.valueOf(statusStr) }.getOrDefault(Addiction.Status.Ongoing)
+                    }
                     // putAll rather than reassign for last_relapse legacy key
                     2 -> history.putAll(LinkedHashMap(decodeSerializableElement(descriptor, i, historySerializer)))
-                    3 -> priority = Addiction.Priority.values()[decodeIntElement(descriptor, i)]
+                    3 -> {
+                        val priorityIdx = decodeIntElement(descriptor, i)
+                        val priorities = Addiction.Priority.values()
+                        priority = if (priorityIdx in priorities.indices) priorities[priorityIdx] else Addiction.Priority.MEDIUM
+                    }
                     4 -> dailyNotes = dailyNotesFromJson(decodeSerializableElement(descriptor, i, JsonElement.serializer()))
                     5 -> timeSaving = decodeSerializableElement(descriptor, i, LocalTimeIso8601Serializer)
                     6 -> savings = LinkedHashMap(decodeSerializableElement(descriptor, i, savingsSerializer))
@@ -50,6 +57,8 @@ object AddictionSerializer : KSerializer<Addiction> {
                         val lastRelapse = decodeSerializableElement(descriptor, i, InstantComponentSerializer)
                         if (lastRelapse > Clock.System.now()) {
                             status = Addiction.Status.Future
+                            history[lastRelapse.toEpochMilliseconds()] = 0
+                        } else if (history.isEmpty()) {
                             history[lastRelapse.toEpochMilliseconds()] = 0
                         }
                     }
@@ -101,13 +110,14 @@ private fun dailyNotesFromJson(element: JsonElement): LinkedHashMap<LocalDate, M
     val result = LinkedHashMap<LocalDate, MutableList<String>>()
     val obj = element as? JsonObject ?: return result
     for ((key, value) in obj) {
+        val date = runCatching { LocalDate.parse(key) }.getOrNull() ?: continue
         val notes = mutableListOf<String>()
         when (value) {
             is JsonPrimitive -> notes.add(value.content)
             is JsonArray -> value.forEach { if (it is JsonPrimitive) notes.add(it.content) }
             else -> {}
         }
-        result[LocalDate.parse(key)] = notes
+        result[date] = notes
     }
     return result
 }

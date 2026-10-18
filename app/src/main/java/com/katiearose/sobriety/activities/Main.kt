@@ -140,13 +140,32 @@ class Main : AppCompatActivity() {
         binding.addCardButton.setOnClickListener { newCardDialog() }
         cacheHandler = CacheHandler(this)
         cacheHandler.backupCacheIfMissing()
-        if (addictions.isEmpty())
+        if (addictions.isEmpty()) {
             try {
                 this.openFileInput("Sobriety.cache").use {
-                    addictions.addAll(cacheHandler.readCache(it))
+                    val loaded = cacheHandler.readCache(it)
+                    if (loaded.isEmpty()) {
+                        // Cache may be corrupt/empty. Try the upgrade backup before giving up.
+                        val restored = cacheHandler.readBackup()
+                        if (restored != null) {
+                            addictions.addAll(restored)
+                        } else {
+                        }
+                    } else {
+                        addictions.addAll(loaded)
+                    }
                 }
-            } catch (_: FileNotFoundException) {
+            } catch (e: FileNotFoundException) {
+                // No cache yet; fall back to the backup if one exists (e.g. after a
+                // partial migration or a user-cleared file).
+                val restored = cacheHandler.readBackup()
+                if (restored != null) addictions.addAll(restored)
+            } catch (e: Exception) {
+                // Any other failure: try the backup, never crash the launch.
+                val restored = cacheHandler.readBackup()
+                if (restored != null) addictions.addAll(restored)
             }
+        }
 
         updatePromptVisibility()
 

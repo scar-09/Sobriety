@@ -109,6 +109,7 @@ class Settings : AppCompatActivity() {
                                         Main.addictions.clear()
                                         Main.addictions.addAll(imported)
                                     }
+                                    cacheHandler.writeCache(Main.addictions)
                                     val intent = Intent().putExtra("import", true)
                                     requireActivity().setResult(Activity.RESULT_OK, intent)
                                     requireActivity().finish()

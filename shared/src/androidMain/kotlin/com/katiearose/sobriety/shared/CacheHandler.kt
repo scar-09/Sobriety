@@ -18,15 +18,29 @@ class CacheHandler(private val context: Context) {
 
     fun readCache(input: InputStream): List<Addiction> {
         BufferedInputStream(input).use { stream ->
-            Scanner(stream).useDelimiter("\\A").use {
-                return JsonSerializer.decodeFromString(it.next())
+            val text = try {
+                Scanner(stream).useDelimiter("\\A").use { if (it.hasNext()) it.next() else "" }
+            } catch (e: Exception) {
+                return emptyList()
+            }
+            if (text.isBlank()) return emptyList()
+            return try {
+                JsonSerializer.decodeFromString(text)
+            } catch (e: Exception) {
+                emptyList()
             }
         }
     }
 
     fun writeCache(addictions: List<Addiction>) {
-        BufferedWriter(FileWriter(File(context.filesDir, "Sobriety.cache"))).use {
+        val live = File(context.filesDir, "Sobriety.cache")
+        val tmp = File(context.filesDir, "Sobriety.cache.tmp")
+        BufferedWriter(FileWriter(tmp)).use {
             it.write(JsonSerializer.encodeToString(listSerializer, addictions))
+        }
+        if (!tmp.renameTo(live)) {
+            tmp.copyTo(live, overwrite = true)
+            tmp.delete()
         }
     }
 
@@ -36,10 +50,6 @@ class CacheHandler(private val context: Context) {
         }
     }
 
-    /**
-     * Reads the given document and returns the parsed addictions, or null if the
-     * document can't be opened or does not contain valid data. Never throws.
-     */
     fun importData(input: Uri): List<Addiction>? {
         val stream = context.contentResolver.openInputStream(input)
         if (stream == null) {
@@ -52,23 +62,24 @@ class CacheHandler(private val context: Context) {
         }
     }
 
-    /**
-     * Copies the current cache to a .bak file as a safety net before destructive operations.
-     */
     fun backupCache() {
         val cache = File(context.filesDir, "Sobriety.cache")
         if (cache.exists())
             cache.copyTo(File(context.filesDir, "Sobriety.cache.bak"), overwrite = true)
     }
 
-    /**
-     * Creates a .bak of the current cache on first launch after an update, so a data
-     * format migration can always be rolled back. Does nothing if a .bak already exists.
-     */
     fun backupCacheIfMissing() {
         val cache = File(context.filesDir, "Sobriety.cache")
         val backup = File(context.filesDir, "Sobriety.cache.bak")
         if (cache.exists() && !backup.exists())
             cache.copyTo(backup, overwrite = true)
+    }
+
+    fun readBackup(): List<Addiction>? {
+        val backup = File(context.filesDir, "Sobriety.cache.bak")
+        if (!backup.exists()) return null
+        return runCatching {
+            backup.inputStream().use { readCache(it) }.takeIf { it.isNotEmpty() }
+        }.getOrNull()
     }
 }

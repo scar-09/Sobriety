@@ -31,10 +31,13 @@ data class Addiction(
      * @param whichAttempts list of map indices
      */
     fun calculateAvgRelapseDuration(whichAttempts: List<Int>): Long {
+        if (whichAttempts.isEmpty()) return 0L
         var totalDuration = 0L
         val list = history.toList()
         for (attemptIndex in whichAttempts) {
-            totalDuration += (list[attemptIndex].second - list[attemptIndex].first)
+            if (attemptIndex in list.indices) {
+                totalDuration += (list[attemptIndex].second - list[attemptIndex].first).coerceAtLeast(0L)
+            }
         }
         return totalDuration / whichAttempts.size
     }
@@ -84,20 +87,27 @@ data class Addiction(
      * - the progress as an int in range 0..100
      */
     fun calculateMilestoneProgressionPercentage(milestone: Pair<Int, DateTimeUnit>): Pair<Long, Int> {
-        val goal = history.keys.last() + milestone.first * milestone.second.toMillis()
+        val lastKey = history.keys.lastOrNull() ?: return Pair(0L, 0)
+        val goal = lastKey + milestone.first * milestone.second.toMillis()
         return when (status) {
-            Status.Ongoing -> Pair(goal,
-                (((Clock.System.now().toEpochMilliseconds() - history.keys.last()).toFloat() /
-                    (goal - history.keys.last())) * 100).toInt())
+            Status.Ongoing -> {
+                val totalSpan = goal - lastKey
+                val progress = if (totalSpan <= 0L) 100 else {
+                    val elapsed = Clock.System.now().toEpochMilliseconds() - lastKey
+                    (((elapsed.toFloat() / totalSpan) * 100).toInt()).coerceIn(0, 100)
+                }
+                Pair(goal, progress)
+            }
 
             Status.Stopped, Status.Future -> Pair(goal, 0)
         }
     }
 
     fun stopAbstaining() {
+        val now = Clock.System.now().toEpochMilliseconds()
         when (status) {
             // End the current attempt
-            Status.Ongoing -> history.putLast(Clock.System.now().toEpochMilliseconds())
+            Status.Ongoing -> history.putLast(now)
 
             // You can't stop twice
             Status.Stopped -> {}
@@ -105,10 +115,11 @@ data class Addiction(
             // If a Future addiction is stopped, remove the future attempt
             // If that was the only attempt, add in a 0-length attempt to reflect history
             Status.Future -> {
-                history.remove(history.keys.last())
+                if (history.isNotEmpty()) history.remove(history.keys.last())
                 if (history.isEmpty()) {
-                    val currentTime = Clock.System.now().toEpochMilliseconds()
-                    history[currentTime] = currentTime
+                    history[now] = now
+                } else if (history.values.last() == 0L) {
+                    history.putLast(now)
                 }
             }
         }
@@ -119,16 +130,18 @@ data class Addiction(
      * @param atMillis moment the relapse happened, defaults to now
      */
     fun relapse(atMillis: Long = Clock.System.now().toEpochMilliseconds()) {
+        val lastStart = history.keys.lastOrNull() ?: 0L
+        val validAt = if (atMillis <= lastStart && history.isNotEmpty()) lastStart + 1L else atMillis
         when (status) {
             // End the current attempt
-            Status.Ongoing -> history.putLast(atMillis)
+            Status.Ongoing -> history.putLast(validAt)
 
             Status.Stopped -> {}
 
             // Remove the future attempt (user is starting early)
-            Status.Future -> history.remove(history.keys.last())
+            Status.Future -> if (history.isNotEmpty()) history.remove(history.keys.last())
         }
-        history[atMillis] = 0
+        history[validAt] = 0
         status = Status.Ongoing
     }
 

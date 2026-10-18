@@ -71,7 +71,7 @@ class MilestoneAdapter(
         )
         val calculatedPair = addiction.calculateMilestoneProgressionPercentage(milestone)
         holder.milestoneProgressBar.progress = calculatedPair.second
-        if (holder.milestoneProgressBar.progress == 100) {
+        if (holder.milestoneProgressBar.progress >= 100) {
             holder.milestoneTime.textResource = R.string.completed
         } else {
             holder.milestoneTime.text =
