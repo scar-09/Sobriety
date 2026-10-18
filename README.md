@@ -2,7 +2,9 @@
 
 ## Project Status
 
-Sobriety has been unmaintained for a long time, for a few different reasons. Most directly, the signing key for the app was lost when my old laptop finally gave up the ghost, and, being a teenager, I hadn't thought to back it up. This means that there is no way to publish a new release of Sobriety that doesn't force users to uninstall and reinstall the app, deleting their data in the process. That in and of itself wouldn't be development-ending, since Sobriety has had many breaking changes over it's lifecycle, but the work of rebuilding the app into something that I can actually expand on would also be significant. The code isn't particularly maintainable, because, when I wrote the majority of it, I was a teenager with minimal knowledge of Kotlin trying my best to write an Android app. I also have found that Android app development in general is exhausting, especially compared to other projects that I've worked on since, and I don't foresee myself coming back to it anytime soon. 
+Sobriety has been unmaintained for a long time, for a few different reasons. Most directly, the signing key for the app was lost when my old laptop finally gave up the ghost, and, being a teenager, I hadn't thought to back it up. This means that there is no way to publish a new release of Sobriety that doesn't force users to uninstall and reinstall the app, deleting their data in the process. That in and of itself wouldn't be development-ending, since Sobriety has had many breaking changes over it's lifecycle, but the work of rebuilding the app into something that I can actually expand on would also be significant.
+
+The code isn't particularly maintainable, because, when I wrote the majority of it, I was a teenager with minimal knowledge of Kotlin trying my best to write an Android app. I also have found that Android app development in general is exhausting, especially compared to other projects that I've worked on since, and I don't foresee myself coming back to it anytime soon. 
 
 There are a few community forks out there, [including one by scar-09](https://github.com/scar-09/Sobriety), and I'm overjoyed to see development continuing there. I'm also still planning out a possible Sobriety successor, which would either be a PWA or a Flutter app rather than a native Android app written in Kotlin. Which way it goes depends mostly on whether I ever get around to learning Dart. If and when that project becomes available, I'll update this. README to mention it. 
 
@@ -11,6 +13,7 @@ Lastly, please feel free to continue posting issues and making pull requests. Wh
 Thank you to everyone who has used, supported, and contributed to Sobriety over the past several years. I appreciate it deeply and I'm very sorry to be letting you all down like this.
 
 Good luck out there,
+
 Katherine
 
 ---
