@@ -1,6 +1,6 @@
 # Sobriety (fork)
 
-[![Download latest](https://img.shields.io/badge/download-latest-blue)](https://github.com/scar-09/Sobriety/releases)
+[![Download latest](https://img.shields.io/badge/download-latest-blue)](https://github.com/scar-09/Sobriety-Fork/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
 Sobriety is a simple, minimal app to track how long you've been sober from anything you
@@ -13,7 +13,7 @@ story belong entirely to [seaglade](https://github.com/seaglade) and the upstrea
 contributors. The original app's maintainer confirmed in
 [this PR thread](https://github.com/seaglade/Sobriety/pull/118#issuecomment-6249704536)
 that she can't publish new builds, so this fork provides them — signed APKs are
-published on the [Releases page](https://github.com/scar-09/Sobriety/releases).
+published on the [Releases page](https://github.com/scar-09/Sobriety-Fork/releases).
 
 *Last updated: 18 October 2026*
 
@@ -42,7 +42,7 @@ published on the [Releases page](https://github.com/scar-09/Sobriety/releases).
 
 ## Installing
 
-- Signed builds are on the [Releases page](https://github.com/scar-09/Sobriety/releases).
+- Signed builds are on the [Releases page](https://github.com/scar-09/Sobriety-Fork/releases).
 - The fork has its own package id (`io.github.scar09.sobriety`) and signing key, so it
   installs **alongside** the original app — it does not replace or update it.
 
