@@ -1,6 +1,6 @@
 # Sobriety (fork)
 
-[![Latest release](https://img.shields.io/github/v/release/scar-09/Sobriety?label=release)](https://github.com/scar-09/Sobriety/releases)
+[![Download latest](https://img.shields.io/badge/download-latest-blue)](https://github.com/scar-09/Sobriety/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
 Sobriety is a simple, minimal app to track how long you've been sober from anything you
