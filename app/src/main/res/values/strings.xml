@@ -50,8 +50,8 @@
         <item quantity="other">%d seconds</item>
     </plurals>
     <string name="recent_avg">Recent Average: %s</string>
-    <string name="longest_streak">Longest streak: %s</string>
-    <string name="total_clean">Total clean time: %s</string>
+    <string name="longest_streak">Longest streak</string>
+    <string name="total_clean">Total clean time</string>
     <string name="delete">Delete</string>
     <string name="delete_confirm">Do you really want to delete entry \"%s\"?\nThis action cannot be undone.</string>
     <string name="relapse">Relapse</string>

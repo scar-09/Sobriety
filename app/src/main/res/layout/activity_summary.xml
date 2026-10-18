@@ -16,21 +16,37 @@
         android:paddingBottom="8dp">
 
         <TextView
+            android:id="@+id/longest_streak_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Longest streak" />
+
+        <TextView
             android:id="@+id/longest_streak"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            tools:text="Longest streak: 3 days, 4 hours" />
+            tools:text="3 days, 7 hours, 9 minutes, and 36 seconds" />
+
+        <TextView
+            android:id="@+id/total_clean_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Total clean time" />
 
         <TextView
             android:id="@+id/total_clean"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            tools:text="Total clean time: 10 days, 2 hours" />
+            tools:text="10 days, 2 hours" />
 
     </LinearLayout>
 

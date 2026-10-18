@@ -25,14 +25,13 @@ class Summary : AppCompatActivity() {
         addiction = Main.addictions[checkValidIntentData()]
         title = addiction.name
 
-        binding.longestStreak.text = getString(
-            R.string.longest_streak,
+        binding.longestStreakLabel.text = getString(R.string.longest_streak)
+        binding.longestStreak.text =
             convertSecondsToString(addiction.longestAttemptMillis() / 1000)
-        )
-        binding.totalClean.text = getString(
-            R.string.total_clean,
+
+        binding.totalCleanLabel.text = getString(R.string.total_clean)
+        binding.totalClean.text =
             convertSecondsToString(addiction.totalAttemptMillis() / 1000)
-        )
 
         progressAdapter = ProgressBarAdapter(addiction, this)
         binding.progressBarList.layoutManager = LinearLayoutManager(this)
