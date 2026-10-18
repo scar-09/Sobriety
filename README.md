@@ -1,14 +1,20 @@
 # Sobriety (fork)
 
+[![Latest release](https://img.shields.io/github/v/release/scar-09/Sobriety?label=release)](https://github.com/scar-09/Sobriety/releases)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
+
 Sobriety is a simple, minimal app to track how long you've been sober from anything you
 want. It tells you how long it's been since you logged a relapse and the average time
 between your most recent relapses, so you have more to work with in recovery.
 
-This repository is a personal **fork** of
+This is a **standalone fork** of
 [seaglade/Sobriety](https://github.com/seaglade/Sobriety). The app, its design, and its
 story belong entirely to [seaglade](https://github.com/seaglade) and the upstream
-contributors. This fork only adds a handful of quality-of-life improvements for personal
-use — it is not a remake or a rebrand.
+contributors. The original app can no longer publish updates (its release signing key
+was lost), so this fork serves as the maintained, buildable continuation — signed APKs
+are published on the [Releases page](https://github.com/scar-09/Sobriety/releases).
+
+*Last updated: 18 October 2026*
 
 ## What this fork adds
 
@@ -31,16 +37,22 @@ use — it is not a remake or a rebrand.
 - 100% offline: no network permission, no trackers, no accounts, no analytics
 - Every feature free
 - Your data stays on your device
-- Same package id, and it reads existing Sobriety data files
+- Compatible with your existing Sobriety data (via export/import)
+
+## Installing
+
+- Signed builds are on the [Releases page](https://github.com/scar-09/Sobriety/releases).
+- The fork has its own package id (`io.github.scar09.sobriety`) and signing key, so it
+  installs **alongside** the original app — it does not replace or update it.
 
 ## Upstream
 
-The original app is maintained by seaglade and published on F-Droid:
+The original app by seaglade is available on F-Droid:
 
 https://f-droid.org/packages/com.katiearose.sobriety/
 
-Fork builds are signed with a different key and are not published on F-Droid; they are
-intended for personal testing and for contributing fixes back upstream.
+Credit for the original app, its design and years of work goes entirely to seaglade and
+the upstream contributors.
 
 ## Building
 
