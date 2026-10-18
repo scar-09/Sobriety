@@ -72,18 +72,22 @@ class Main : AppCompatActivity() {
             if (it.resultCode == RESULT_OK) {
                 val data = requireNotNull(requireNotNull(it.data) { "Something is wrong in the Create activity, go check the create() function" }.extras) { "Something is wrong in the Create activity, go check the create() function" }
                 val name = data.getString("name")!!
-                val instant = data.getLong("instant")
-                val priority =
-                    Addiction.Priority.values()[data.getInt("priority")]
-                val addiction = Addiction.newInstance(name, instant, priority)
-                if (addiction.status == Addiction.Status.Future) {
-                    // Update status at that point in time
-                    addTimerForFutureAddiction(addiction)
+                if (addictions.any { it.name.equals(name, ignoreCase = true) }) {
+                    Snackbar.make(binding.root, R.string.error_duplicate_entry, BaseTransientBottomBar.LENGTH_SHORT).show()
+                } else {
+                    val instant = data.getLong("instant")
+                    val priority =
+                        Addiction.Priority.values()[data.getInt("priority")]
+                    val addiction = Addiction.newInstance(name, instant, priority)
+                    if (addiction.status == Addiction.Status.Future) {
+                        // Update status at that point in time
+                        addTimerForFutureAddiction(addiction)
+                    }
+                    addictions.add(addiction)
+                    addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
+                    cacheHandler.write()
+                    adapterAddictions.notifyDataSetChanged()
                 }
-                addictions.add(addiction)
-                addictions.sortWith { a1, a2 -> a1.priority.compareTo(a2.priority) }
-                cacheHandler.write()
-                adapterAddictions.notifyDataSetChanged()
             }
         }
 
