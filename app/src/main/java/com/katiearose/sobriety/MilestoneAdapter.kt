@@ -28,12 +28,12 @@ class MilestoneAdapter(
         override fun areItemsTheSame(
             oldItem: Pair<Int, DateTimeUnit>,
             newItem: Pair<Int, DateTimeUnit>
-        ): Boolean = oldItem.first == newItem.first
+        ): Boolean = oldItem == newItem
 
         override fun areContentsTheSame(
             oldItem: Pair<Int, DateTimeUnit>,
             newItem: Pair<Int, DateTimeUnit>
-        ): Boolean = oldItem.second == newItem.second
+        ): Boolean = oldItem == newItem
     }) {
     private val preferences = context.getSharedPref()
 
