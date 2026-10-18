@@ -41,7 +41,13 @@ class Summary : AppCompatActivity() {
         (binding.progressBarList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
     }
 
-    private fun update() {
-        progressAdapter.update()
+    override fun onResume() {
+        super.onResume()
+        progressAdapter.start()
+    }
+
+    override fun onPause() {
+        progressAdapter.stop()
+        super.onPause()
     }
 }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.katiearose.sobriety.databinding.ListItemProgressBarBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.convertRangeToPercentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,14 +31,27 @@ class ProgressBarAdapter(
         ): Boolean = oldItem.first == newItem.first
     }) {
 
+    private val scope = MainScope()
+    private var job: Job? = null
+
     init {
         update()
-        MainScope().launch {
+    }
+
+    // Started/stopped by the Summary activity's lifecycle so we don't tick in the background.
+    fun start() {
+        if (job?.isActive == true) return
+        job = scope.launch {
             while (true) {
                 update()
                 delay(1000)
             }
         }
+    }
+
+    fun stop() {
+        job?.cancel()
+        job = null
     }
 
     fun update() {

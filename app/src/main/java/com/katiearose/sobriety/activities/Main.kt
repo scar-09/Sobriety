@@ -66,6 +66,22 @@ class Main : AppCompatActivity() {
     private lateinit var cacheHandler: CacheHandler
     private lateinit var binding: ActivityMainBinding
 
+    // One ticker for the whole list instead of one coroutine per card. Paused in onPause()
+    // so no wakeups happen while the app is in the background.
+    private val tickerHandler = Handler(Looper.getMainLooper())
+    private val tickerRunnable = object : Runnable {
+        override fun run() {
+            if (::adapterAddictions.isInitialized) {
+                adapterAddictions.notifyItemRangeChanged(
+                    0,
+                    addictions.size,
+                    AddictionCardAdapter.TICK
+                )
+            }
+            tickerHandler.postDelayed(this, 1000)
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private val addNewAddiction =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -468,7 +484,14 @@ class Main : AppCompatActivity() {
      */
     override fun onResume() {
         updatePromptVisibility()
+        tickerHandler.removeCallbacks(tickerRunnable)
+        tickerHandler.post(tickerRunnable)
         super.onResume()
+    }
+
+    override fun onPause() {
+        tickerHandler.removeCallbacks(tickerRunnable)
+        super.onPause()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
