@@ -94,17 +94,20 @@ data class Addiction(
         status = Status.Stopped
     }
 
-    fun relapse() {
+    /**
+     * @param atMillis moment the relapse happened, defaults to now
+     */
+    fun relapse(atMillis: Long = Clock.System.now().toEpochMilliseconds()) {
         when (status) {
             // End the current attempt
-            Status.Ongoing -> history.putLast(Clock.System.now().toEpochMilliseconds())
+            Status.Ongoing -> history.putLast(atMillis)
 
             Status.Stopped -> {}
 
             // Remove the future attempt (user is starting early)
             Status.Future -> history.remove(history.keys.last())
         }
-        history[Clock.System.now().toEpochMilliseconds()] = 0
+        history[atMillis] = 0
         status = Status.Ongoing
     }
 

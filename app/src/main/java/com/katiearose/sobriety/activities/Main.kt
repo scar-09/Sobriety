@@ -17,27 +17,38 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.timepicker.MaterialTimePicker
 import com.katiearose.sobriety.AddictionCardAdapter
 import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivityMainBinding
 import com.katiearose.sobriety.databinding.DialogAddNoteAfterRelapseBinding
 import com.katiearose.sobriety.databinding.DialogMiscBinding
+import com.katiearose.sobriety.databinding.DialogRelapseTimeBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
 import com.katiearose.sobriety.utils.getAddNoteAfterRelapsePref
+import com.katiearose.sobriety.utils.getDateFormatPattern
 import com.katiearose.sobriety.utils.getSharedPref
 import com.katiearose.sobriety.utils.isInputEmpty
 import com.katiearose.sobriety.utils.showConfirmDialog
+import com.katiearose.sobriety.utils.toast
 import com.katiearose.sobriety.utils.write
 import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.toKotlinLocalDate
 import java.io.FileNotFoundException
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Main : AppCompatActivity() {
@@ -130,24 +141,18 @@ class Main : AppCompatActivity() {
                 action
             )
         }, relapseButtonAction = {
-            val (title, question, extra_action) = when (it.status) {
+            when (it.status) {
                 Addiction.Status.Ongoing ->
-                    Triple(
+                    showConfirmDialog(
                         getString(R.string.relapse),
                         getString(R.string.relapse_confirm, it.name)
-                    ) { showAddNoteAfterRelapseDialogIfEnabled(it) }
+                    ) { showRelapseTimeDialog(it) }
 
                 Addiction.Status.Stopped, Addiction.Status.Future ->
-                    Triple(
+                    showConfirmDialog(
                         getString(R.string.track_now),
                         getString(R.string.start_tracking_now, it.name)
-                    ) {}
-            }
-            showConfirmDialog(title, question) {
-                it.relapse()
-                adapterAddictions.notifyItemChanged(addictions.indexOf(it))
-                cacheHandler.write()
-                extra_action()
+                    ) { logRelapse(it, Clock.System.now().toEpochMilliseconds(), offerNote = false) }
             }
         }, stopButtonAction = {
             when (it.status) {
@@ -159,7 +164,7 @@ class Main : AppCompatActivity() {
                         it.stopAbstaining()
                         adapterAddictions.notifyItemChanged(addictions.indexOf(it))
                         cacheHandler.write()
-                        showAddNoteAfterRelapseDialogIfEnabled(it)
+                        showAddNoteAfterRelapseDialogIfEnabled(it, it.history.values.last())
                     }
 
                 Addiction.Status.Stopped ->
@@ -274,19 +279,87 @@ class Main : AppCompatActivity() {
         }, delay)
     }
 
-    private fun showAddNoteAfterRelapseDialogIfEnabled(addiction: Addiction) {
+    private fun logRelapse(addiction: Addiction, timeMillis: Long, offerNote: Boolean = true) {
+        addiction.relapse(timeMillis)
+        adapterAddictions.notifyItemChanged(addictions.indexOf(addiction))
+        cacheHandler.write()
+        if (offerNote)
+            showAddNoteAfterRelapseDialogIfEnabled(addiction, timeMillis)
+    }
+
+    private fun showRelapseTimeDialog(addiction: Addiction) {
+        val dialogViewBinding = DialogRelapseTimeBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this@Main)
+        dialogViewBinding.relapseNow.setOnClickListener {
+            dialog.dismiss()
+            logRelapse(addiction, Clock.System.now().toEpochMilliseconds())
+        }
+        dialogViewBinding.relapsePrevious.setOnClickListener {
+            dialog.dismiss()
+            pickRelapseDate(addiction)
+        }
+        dialog.setContentView(dialogViewBinding.root)
+        dialog.show()
+    }
+
+    private fun pickRelapseDate(addiction: Addiction) {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(R.string.pick_relapse_date)
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setCalendarConstraints(
+                CalendarConstraints.Builder()
+                    .setValidator(DateValidatorPointBackward.now())
+                    .build()
+            )
+            .build()
+        datePicker.addOnPositiveButtonClickListener { selection ->
+            val date = Instant.ofEpochMilli(selection).atZone(ZoneId.of("UTC")).toLocalDate()
+            pickRelapseTime(addiction, date)
+        }
+        datePicker.show(supportFragmentManager, null)
+    }
+
+    private fun pickRelapseTime(addiction: Addiction, date: LocalDate) {
+        val now = ZonedDateTime.now()
+        val timePicker = MaterialTimePicker.Builder()
+            .setTitleText(R.string.pick_relapse_time)
+            .setHour(now.hour)
+            .setMinute(now.minute)
+            .build()
+        timePicker.addOnPositiveButtonClickListener {
+            val relapseMillis = ZonedDateTime.of(
+                date,
+                LocalTime.of(timePicker.hour, timePicker.minute),
+                ZoneId.systemDefault()
+            ).toInstant().toEpochMilli()
+            when {
+                relapseMillis > Instant.now().toEpochMilli() ->
+                    toast(R.string.error_future_relapse)
+
+                relapseMillis <= addiction.history.keys.last() ->
+                    toast(R.string.error_relapse_before_start)
+
+                else -> logRelapse(addiction, relapseMillis)
+            }
+        }
+        timePicker.show(supportFragmentManager, null)
+    }
+
+    private fun showAddNoteAfterRelapseDialogIfEnabled(addiction: Addiction, relapseMillis: Long) {
         val pref = getSharedPref()
         if (pref.getAddNoteAfterRelapsePref()) {
             var dialog: Dialog? = null
             val dialogViewBinding = DialogAddNoteAfterRelapseBinding.inflate(layoutInflater)
-            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            val date = Instant.ofEpochMilli(relapseMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+            val dateFormat = DateTimeFormatter.ofPattern(getSharedPref().getDateFormatPattern())
             with(dialogViewBinding) {
-                noteInput.setText(addiction.dailyNotes[today]) //TextView.setText does accept a null CharSequence.
+                noteDate.text = dateFormat.format(date)
+                noteInput.setText(addiction.dailyNotes[date.toKotlinLocalDate()]) //TextView.setText does accept a null CharSequence.
                 btnSave.setOnClickListener { _ ->
                     if (noteInput.isInputEmpty()) {
                         noteInputLayout.error = getString(R.string.error_empty_note)
                     } else {
-                        addiction.dailyNotes[today] = noteInput.text.toString()
+                        addiction.dailyNotes[date.toKotlinLocalDate()] = noteInput.text.toString()
                         cacheHandler.write()
                         requireNotNull(dialog).dismiss()
                     }
