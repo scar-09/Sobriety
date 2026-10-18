@@ -1,31 +1,28 @@
 # Sobriety (fork)
 
 Sobriety is a simple, minimal app to track how long you've been sober from anything you
-want. It tells you how long it's been since you logged a relapse, and the average time
-between your most recent relapses, so that you have more input with which to work on
-recovery.
+want. It tells you how long it's been since you logged a relapse and the average time
+between your most recent relapses, so you have more to work with in recovery.
 
 This repository is a personal **fork** of
-[KiARC/Sobriety](https://github.com/KiARC/Sobriety). The app, its design, and its story
-belong entirely to [KiARC](https://github.com/KiARC) and the upstream contributors. This
-fork exists to add a handful of quality-of-life improvements for personal use — it is
-not a remake or a rebrand, and the hope is that some of these changes can go upstream.
+[seaglade/Sobriety](https://github.com/seaglade/Sobriety). The app, its design, and its
+story belong entirely to [seaglade](https://github.com/seaglade) and the upstream
+contributors. This fork only adds a handful of quality-of-life improvements for personal
+use — it is not a remake or a rebrand.
 
 ## What this fork adds
 
-Small, focused improvements only:
-
 - **Log a relapse at a previous date/time** instead of only "now"
 - **Rename addictions** at any time
-- **Multiple daily notes per day**, grouped by day, with collapse/expand
+- **Multiple daily notes per day**, grouped by day with collapse/expand
 - **Search** across daily notes
 - **Summary insights**: longest streak and total clean time
-- **"Track now" accepts a previous date/time** (for stopped and future addictions)
+- **"Track now" accepts a previous date/time** (stopped and future addictions)
 - **Safer import/export**: merge or replace, with an automatic backup before changes
-- **Data safety**: atomic cache writes, and recovery from a `.bak` backup if the
-  cache is ever corrupt
-- **Crash fixes**: invalid savings and milestone amounts no longer crash; milestone
-  lists are diffed correctly
+- **Data safety**: atomic cache writes and recovery from a `.bak` backup if the cache
+  is ever corrupt
+- **Crash fixes**: invalid savings and milestone amounts no longer crash the app, and
+  milestone lists update correctly
 - **Visual polish**: clearer typography hierarchy, card layout and theme contrast
   (including Material You)
 
@@ -38,12 +35,12 @@ Small, focused improvements only:
 
 ## Upstream
 
-The original app is maintained by KiARC and published on F-Droid:
+The original app is maintained by seaglade and published on F-Droid:
 
 https://f-droid.org/packages/com.katiearose.sobriety/
 
-This fork is not published on F-Droid. Builds of this fork are signed with a different
-key and are intended for personal testing and, hopefully, contribution back upstream.
+Fork builds are signed with a different key and are not published on F-Droid; they are
+intended for personal testing and for contributing fixes back upstream.
 
 ## Building
 
@@ -55,7 +52,7 @@ Debug build:
 ./gradlew :app:assembleDebug
 ```
 
-Release build (produced unsigned by Gradle; sign with your own key before installing):
+Release build (Gradle produces it unsigned; sign with your own key before installing):
 
 ```
 ./gradlew :app:assembleRelease
@@ -64,4 +61,4 @@ Release build (produced unsigned by Gradle; sign with your own key before instal
 ## License
 
 GPL-3.0 — same as upstream. See [LICENSE](LICENSE). All credit for the original project
-goes to KiARC and its contributors.
+goes to seaglade and its contributors.
