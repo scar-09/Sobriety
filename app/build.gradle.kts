@@ -10,8 +10,8 @@ android {
         applicationId = "io.github.scar09.sobriety"
         minSdk = 21
         targetSdk = 33
-        versionCode = 22
-        versionName = "v10.0.0"
+        versionCode = 23
+        versionName = "v10.1.0"
         setProperty("archivesBaseName", "Sobriety $versionName")
     }
 
