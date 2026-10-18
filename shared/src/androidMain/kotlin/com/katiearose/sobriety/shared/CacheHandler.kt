@@ -60,4 +60,15 @@ class CacheHandler(private val context: Context) {
         if (cache.exists())
             cache.copyTo(File(context.filesDir, "Sobriety.cache.bak"), overwrite = true)
     }
+
+    /**
+     * Creates a .bak of the current cache on first launch after an update, so a data
+     * format migration can always be rolled back. Does nothing if a .bak already exists.
+     */
+    fun backupCacheIfMissing() {
+        val cache = File(context.filesDir, "Sobriety.cache")
+        val backup = File(context.filesDir, "Sobriety.cache.bak")
+        if (cache.exists() && !backup.exists())
+            cache.copyTo(backup, overwrite = true)
+    }
 }

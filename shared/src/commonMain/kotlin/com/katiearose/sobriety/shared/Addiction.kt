@@ -12,7 +12,7 @@ data class Addiction(
     // Maps past, current, and future attempts start and end epoch milliseconds
     val history: LinkedHashMap<Long, Long>,
     var priority: Priority,
-    val dailyNotes: LinkedHashMap<LocalDate, String>,
+    val dailyNotes: LinkedHashMap<LocalDate, MutableList<String>>,
     var timeSaving: LocalTime,
     // What is being saved -> Pair(amount, unit)
     val savings: LinkedHashMap<String, Pair<Double, String>>,
@@ -132,7 +132,10 @@ data class Addiction(
         status = Status.Ongoing
     }
 
-    fun getDailyNotesList(sort: SortMode): List<Pair<LocalDate, String>> {
+    /**
+     * @return each day mapped to its ordered list of notes
+     */
+    fun getDailyNotesGrouped(sort: SortMode): List<Pair<LocalDate, MutableList<String>>> {
         return when (sort) {
             SortMode.ASC -> dailyNotes.toList().sortedWith { n1, n2 -> n1.first.compareTo(n2.first) }
             SortMode.DESC -> dailyNotes.toList().sortedWith { n1, n2 -> n2.first.compareTo(n1.first) }

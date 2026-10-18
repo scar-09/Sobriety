@@ -123,6 +123,7 @@ class Main : AppCompatActivity() {
 
         binding.addCardButton.setOnClickListener { newCardDialog() }
         cacheHandler = CacheHandler(this)
+        cacheHandler.backupCacheIfMissing()
         if (addictions.isEmpty())
             try {
                 this.openFileInput("Sobriety.cache").use {
@@ -391,12 +392,12 @@ class Main : AppCompatActivity() {
             val dateFormat = DateTimeFormatter.ofPattern(getSharedPref().getDateFormatPattern())
             with(dialogViewBinding) {
                 noteDate.text = dateFormat.format(date)
-                noteInput.setText(addiction.dailyNotes[date.toKotlinLocalDate()]) //TextView.setText does accept a null CharSequence.
                 btnSave.setOnClickListener { _ ->
                     if (noteInput.isInputEmpty()) {
                         noteInputLayout.error = getString(R.string.error_empty_note)
                     } else {
-                        addiction.dailyNotes[date.toKotlinLocalDate()] = noteInput.text.toString()
+                        addiction.dailyNotes.getOrPut(date.toKotlinLocalDate()) { mutableListOf() }
+                            .add(noteInput.text.toString())
                         cacheHandler.write()
                         requireNotNull(dialog).dismiss()
                     }

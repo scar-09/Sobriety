@@ -97,6 +97,10 @@
     <string name="misc">Miscellaneous</string>
     <string name="daily_notes">Daily notes</string>
     <string name="search_notes">Search notes</string>
+    <plurals name="notes_count">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
     <string name="add_note">Add note</string>
     <string name="note">Note</string>
     <string name="note_hint">Enter notes…</string>
@@ -143,7 +147,7 @@
     <string name="add_note_after_relapse">Looks like you just relapsed.\nWould you like to write down what happened?\nThis will be saved in the \"Daily notes\" section with this date:</string>
     <string name="dont_show_dialog_again">Don\'t show this dialog again</string>
     <string name="add_note_after_relapse_pref">Add note after relapse</string>
-    <string name="add_note_after_relapse_pref_summary">When logging a relapse, offer to make (or edit, if it already exists) a note for that day</string>
+    <string name="add_note_after_relapse_pref_summary">When logging a relapse, offer to add a new note for that day</string>
     <string name="data">Data</string>
     <string name="data_export">Export</string>
     <string name="data_import">Import</string>
