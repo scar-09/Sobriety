@@ -3,6 +3,7 @@ package com.katiearose.sobriety.activities
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -49,6 +50,15 @@ class DailyNotes : AppCompatActivity() {
             })
         binding.notesList.layoutManager = LinearLayoutManager(this)
         binding.notesList.adapter = adapter
+
+        binding.notesSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.setFilter(newText.orEmpty())
+                return true
+            }
+        })
 
         binding.addNoteFab.setOnClickListener { showAddNoteDialog(false, Clock.System.now().toLocalDateTime(
             TimeZone.currentSystemDefault()).date) }

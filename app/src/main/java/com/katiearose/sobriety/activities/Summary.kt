@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.katiearose.sobriety.ProgressBarAdapter
+import com.katiearose.sobriety.R
 import com.katiearose.sobriety.databinding.ActivitySummaryBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.*
@@ -24,6 +25,14 @@ class Summary : AppCompatActivity() {
         addiction = Main.addictions[checkValidIntentData()]
         title = addiction.name
 
+        binding.longestStreak.text = getString(
+            R.string.longest_streak,
+            convertSecondsToString(addiction.longestAttemptMillis() / 1000)
+        )
+        binding.totalClean.text = getString(
+            R.string.total_clean,
+            convertSecondsToString(addiction.totalAttemptMillis() / 1000)
+        )
 
         progressAdapter = ProgressBarAdapter(addiction, this)
         binding.progressBarList.layoutManager = LinearLayoutManager(this)

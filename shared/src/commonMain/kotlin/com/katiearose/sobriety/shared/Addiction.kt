@@ -59,6 +59,27 @@ data class Addiction(
     }
 
     /**
+     * @return the longest single attempt duration in milliseconds. The ongoing attempt
+     * is counted up to now. Zero-length and not-yet-started attempts count as 0.
+     */
+    fun longestAttemptMillis(): Long = history.entries.maxOfOrNull { (start, end) ->
+        attemptDuration(start, end)
+    } ?: 0L
+
+    /**
+     * @return the total time spent abstaining across all attempts in milliseconds.
+     */
+    fun totalAttemptMillis(): Long = history.entries.sumOf { (start, end) ->
+        attemptDuration(start, end)
+    }
+
+    private fun attemptDuration(start: Long, end: Long): Long {
+        // An end of 0 marks the ongoing attempt, which is measured up to now
+        val effectiveEnd = if (end == 0L) Clock.System.now().toEpochMilliseconds() else end
+        return (effectiveEnd - start).coerceAtLeast(0L)
+    }
+
+    /**
      * @return - the goal point in milliseconds
      * - the progress as an int in range 0..100
      */

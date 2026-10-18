@@ -37,17 +37,32 @@ class NoteAdapter(
         ): Boolean = oldItem.second == newItem.second
     }) {
     private val preferences = context.getSharedPref()
+    private var filter: String = ""
 
     init { update() }
 
     private val dateFormat = DateTimeFormatter.ofPattern(preferences.getDateFormatPattern())
 
+    /**
+     * Filters the displayed notes by a case-insensitive substring match on the note text.
+     * The underlying [Addiction.dailyNotes] map is never modified.
+     */
+    fun setFilter(query: String) {
+        if (query == filter) return
+        filter = query
+        update()
+    }
+
     fun update() {
-        submitList(when (preferences.getSortNotesPref()) {
+        val notes = when (preferences.getSortNotesPref()) {
             "asc" -> addiction.getDailyNotesList(SortMode.ASC)
             "desc" -> addiction.getDailyNotesList(SortMode.DESC)
             else -> addiction.getDailyNotesList(SortMode.NONE)
-        })
+        }
+        submitList(
+            if (filter.isBlank()) notes
+            else notes.filter { it.second.contains(filter, ignoreCase = true) }
+        )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
