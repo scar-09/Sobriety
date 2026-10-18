@@ -7,7 +7,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.katiearose.sobriety"
+        applicationId = "io.github.scar09.sobriety"
         minSdk = 21
         targetSdk = 33
         versionCode = 22
