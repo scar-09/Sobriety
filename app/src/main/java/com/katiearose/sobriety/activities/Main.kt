@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
@@ -30,6 +31,7 @@ import com.katiearose.sobriety.databinding.ActivityMainBinding
 import com.katiearose.sobriety.databinding.DialogAddNoteAfterRelapseBinding
 import com.katiearose.sobriety.databinding.DialogMiscBinding
 import com.katiearose.sobriety.databinding.DialogRelapseTimeBinding
+import com.katiearose.sobriety.databinding.DialogRenameAddictionBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.shared.CacheHandler
 import com.katiearose.sobriety.utils.applyThemes
@@ -146,13 +148,13 @@ class Main : AppCompatActivity() {
                     showConfirmDialog(
                         getString(R.string.relapse),
                         getString(R.string.relapse_confirm, it.name)
-                    ) { showRelapseTimeDialog(it) }
+                    ) { showRelapseTimeDialog(it, R.string.relapse_when, offerNote = true) }
 
                 Addiction.Status.Stopped, Addiction.Status.Future ->
                     showConfirmDialog(
                         getString(R.string.track_now),
                         getString(R.string.start_tracking_now, it.name)
-                    ) { logRelapse(it, Clock.System.now().toEpochMilliseconds(), offerNote = false) }
+                    ) { showRelapseTimeDialog(it, R.string.track_when, offerNote = false) }
             }
         }, stopButtonAction = {
             when (it.status) {
@@ -241,6 +243,10 @@ class Main : AppCompatActivity() {
                 )
                 dialog.dismiss()
             }
+            dialogViewBinding.renameAddiction.setOnClickListener {
+                dialog.dismiss()
+                showRenameDialog(a)
+            }
             dialog.setContentView(dialogViewBinding.root)
             dialog.show()
         }, cardButtonAction = {
@@ -287,22 +293,27 @@ class Main : AppCompatActivity() {
             showAddNoteAfterRelapseDialogIfEnabled(addiction, timeMillis)
     }
 
-    private fun showRelapseTimeDialog(addiction: Addiction) {
+    private fun showRelapseTimeDialog(
+        addiction: Addiction,
+        @StringRes titleRes: Int,
+        offerNote: Boolean
+    ) {
         val dialogViewBinding = DialogRelapseTimeBinding.inflate(layoutInflater)
+        dialogViewBinding.relapseWhenTitle.setText(titleRes)
         val dialog = BottomSheetDialog(this@Main)
         dialogViewBinding.relapseNow.setOnClickListener {
             dialog.dismiss()
-            logRelapse(addiction, Clock.System.now().toEpochMilliseconds())
+            logRelapse(addiction, Clock.System.now().toEpochMilliseconds(), offerNote = offerNote)
         }
         dialogViewBinding.relapsePrevious.setOnClickListener {
             dialog.dismiss()
-            pickRelapseDate(addiction)
+            pickRelapseDate(addiction, offerNote)
         }
         dialog.setContentView(dialogViewBinding.root)
         dialog.show()
     }
 
-    private fun pickRelapseDate(addiction: Addiction) {
+    private fun pickRelapseDate(addiction: Addiction, offerNote: Boolean) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText(R.string.pick_relapse_date)
             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -314,12 +325,30 @@ class Main : AppCompatActivity() {
             .build()
         datePicker.addOnPositiveButtonClickListener { selection ->
             val date = Instant.ofEpochMilli(selection).atZone(ZoneId.of("UTC")).toLocalDate()
-            pickRelapseTime(addiction, date)
+            pickRelapseTime(addiction, date, offerNote)
         }
         datePicker.show(supportFragmentManager, null)
     }
 
-    private fun pickRelapseTime(addiction: Addiction, date: LocalDate) {
+    /**
+     * The earliest moment a new attempt may start.
+     * Ongoing attempts may not be restarted at or before their own start; Stopped and
+     * Future ones must start after the last attempt that actually ended. Null means
+     * there is no lower bound.
+     */
+    private fun minRelapseMillis(addiction: Addiction): Long? = when (addiction.status) {
+        Addiction.Status.Ongoing -> addiction.history.keys.last()
+
+        Addiction.Status.Stopped -> addiction.history.values.last()
+
+        Addiction.Status.Future -> {
+            // The future attempt itself has no end, so look at the attempt before it
+            val entries = addiction.history.entries.toList()
+            if (entries.size >= 2) entries[entries.size - 2].value else null
+        }
+    }
+
+    private fun pickRelapseTime(addiction: Addiction, date: LocalDate, offerNote: Boolean) {
         val now = ZonedDateTime.now()
         val timePicker = MaterialTimePicker.Builder()
             .setTitleText(R.string.pick_relapse_time)
@@ -332,14 +361,18 @@ class Main : AppCompatActivity() {
                 LocalTime.of(timePicker.hour, timePicker.minute),
                 ZoneId.systemDefault()
             ).toInstant().toEpochMilli()
+            val minimum = minRelapseMillis(addiction)
+            val tooEarlyError =
+                if (addiction.status == Addiction.Status.Ongoing) R.string.error_relapse_before_start
+                else R.string.error_track_before_end
             when {
                 relapseMillis > Instant.now().toEpochMilli() ->
                     toast(R.string.error_future_relapse)
 
-                relapseMillis <= addiction.history.keys.last() ->
-                    toast(R.string.error_relapse_before_start)
+                minimum != null && relapseMillis <= minimum ->
+                    toast(tooEarlyError)
 
-                else -> logRelapse(addiction, relapseMillis)
+                else -> logRelapse(addiction, relapseMillis, offerNote = offerNote)
             }
         }
         timePicker.show(supportFragmentManager, null)
@@ -376,6 +409,41 @@ class Main : AppCompatActivity() {
                 show()
             }
         }
+    }
+
+    private fun showRenameDialog(addiction: Addiction) {
+        val dialogViewBinding = DialogRenameAddictionBinding.inflate(layoutInflater)
+        dialogViewBinding.renameInput.setText(addiction.name)
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.rename)
+            .setView(dialogViewBinding.root)
+            .setPositiveButton(R.string.edit, null)
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
+        // Override the positive button so the dialog stays open while the name is invalid
+        dialog.setOnShowListener {
+            dialog.getButton(android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                val newName = dialogViewBinding.renameInput.text.toString().trim()
+                val duplicate = addictions.any {
+                    it !== addiction && it.name.equals(newName, ignoreCase = true)
+                }
+                when {
+                    newName.isBlank() ->
+                        dialogViewBinding.renameInputLayout.error = getString(R.string.error_empty_name)
+
+                    duplicate ->
+                        dialogViewBinding.renameInputLayout.error = getString(R.string.error_duplicate_entry)
+
+                    else -> {
+                        addiction.name = newName
+                        cacheHandler.write()
+                        adapterAddictions.notifyItemChanged(addictions.indexOf(addiction))
+                        dialog.dismiss()
+                    }
+                }
+            }
+        }
+        dialog.show()
     }
 
     private fun updatePromptVisibility() {

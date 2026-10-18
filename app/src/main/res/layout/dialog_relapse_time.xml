@@ -8,6 +8,7 @@
     tools:ignore="UnusedAttribute">
 
     <TextView
+        android:id="@+id/relapse_when_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginVertical="10dp"

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = AddictionSerializer::class)
 @SerialName("addiction")
 data class Addiction(
-    val name: String,
+    var name: String,
     var status: Status,
     // Maps past, current, and future attempts start and end epoch milliseconds
     val history: LinkedHashMap<Long, Long>,

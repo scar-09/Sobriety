@@ -12,6 +12,7 @@
     <string name="priority">Priority</string>
     <string name="edit_priority">Edit priority</string>
     <string name="edit">Edit</string>
+    <string name="rename">Rename</string>
     <string name="edit_priority_success">Successfully edited addiction priority</string>
     <string name="high">High</string>
     <string name="medium">Medium</string>
@@ -60,6 +61,8 @@
     <string name="pick_relapse_time">Pick relapse time</string>
     <string name="error_future_relapse">Pick a time that is not in the future</string>
     <string name="error_relapse_before_start">Pick a time after your current attempt started</string>
+    <string name="track_when">When did you start this attempt?</string>
+    <string name="error_track_before_end">Pick a time after your previous attempt ended</string>
     <string name="stop">Stop</string>
     <string name="stop_confirm">Stop abstaining from \"%s\"?</string>
     <string name="stop_notice">Stopped at: %s\nYour attempt lasted %s</string>
