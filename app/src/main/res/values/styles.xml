@@ -9,4 +9,27 @@
     <style name="Preference.MaterialSwitchPreference" parent="Preference.SwitchPreferenceCompat.Material">
         <item name="android:widgetLayout">@layout/preferences_material_switch</item>
     </style>
+
+    <!-- Consistent app-bar title typography across the default (M2) and Material You (M3) themes. -->
+    <style name="TextAppearance.Sobriety.ActionBar.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Sobriety.ActionBar.Title.M3" parent="TextAppearance.Material3.ActionBar.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Widget.Sobriety.ActionBar" parent="Widget.MaterialComponents.ActionBar.Solid">
+        <item name="titleTextStyle">@style/TextAppearance.Sobriety.ActionBar.Title</item>
+    </style>
+
+    <style name="Widget.Sobriety.ActionBar.M3" parent="Widget.Material3.ActionBar.Solid">
+        <item name="titleTextStyle">@style/TextAppearance.Sobriety.ActionBar.Title.M3</item>
+    </style>
 </resources>

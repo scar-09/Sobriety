@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="Longest streak: 3 days, 4 hours" />
 
         <TextView
@@ -28,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="Total clean time: 10 days, 2 hours" />
 
     </LinearLayout>

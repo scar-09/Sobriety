@@ -21,8 +21,9 @@
             android:layout_height="wrap_content"
             tools:text="ADDICTION NAME"
             android:textColor="?attr/colorTextOnCard"
-            android:textSize="@dimen/text_size_medium"
-            android:textStyle="bold"
+            android:textSize="@dimen/text_size_title"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.02"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +54,7 @@
             tools:text="0 days 5 hours 20 minutes 10 seconds"
             android:textColor="?attr/colorTextOnCard"
             android:textSize="@dimen/text_size_small"
+            android:fontFeatureSettings="tnum"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewPriority" />
