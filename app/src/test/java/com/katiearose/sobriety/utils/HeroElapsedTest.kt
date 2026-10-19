@@ -84,4 +84,32 @@ class HeroElapsedTest {
         val end = millis(2026, 3, 20) + 86_399_000L
         assertEquals(HeroElapsed(3, 2, 5, 23, 59, 59), decomposeElapsed(start, end, utc))
     }
+
+    @Test
+    fun threeHoursEightMinutesFortySevenSeconds() {
+        val start = millis(2025, 1, 15)
+        val end = start + ((3 * 60 + 8) * 60 + 47) * 1000L
+        assertEquals(HeroElapsed(0, 0, 0, 3, 8, 47), decomposeElapsed(start, end, utc))
+    }
+
+    @Test
+    fun fiveDaysThreeHoursEightMinutesFortySevenSeconds() {
+        val start = millis(2025, 1, 15)
+        val end = start + ((5 * 24 + 3) * 60 * 60 + 8 * 60 + 47) * 1000L
+        assertEquals(HeroElapsed(0, 0, 5, 3, 8, 47), decomposeElapsed(start, end, utc))
+    }
+
+    @Test
+    fun oneMonthFourDaysThreeHoursEightMinutesFortySevenSeconds() {
+        val start = millis(2025, 3, 10)
+        val end = millis(2025, 4, 14, 15, 8, 47)
+        assertEquals(HeroElapsed(0, 1, 4, 3, 8, 47), decomposeElapsed(start, end, utc))
+    }
+
+    @Test
+    fun threeYearsElevenMonthsTwentyEightDaysLongestCase() {
+        val start = millis(2022, 4, 11)
+        val end = millis(2026, 4, 9, 11, 59, 59)
+        assertEquals(HeroElapsed(3, 11, 28, 23, 59, 59), decomposeElapsed(start, end, utc))
+    }
 }

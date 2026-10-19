@@ -4,11 +4,14 @@ import android.content.Context
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
+import android.text.style.ScaleXSpan
 import android.text.style.SuperscriptSpan
 import com.katiearose.sobriety.R
 import java.util.Locale
 
 private const val SMALL_UNIT_SCALE = 0.6f
+private const val SECONDS_SCALE = 0.566f
+private const val SECONDS_MARGIN_SCALE = 0.5f
 
 private data class HeroUnit(val value: Int, val label: String)
 
@@ -57,6 +60,46 @@ fun buildHeroText(elapsed: HeroElapsed): CharSequence {
     return builder
 }
 
+fun buildHeroTopText(elapsed: HeroElapsed): String? = when {
+    elapsed.years > 0 -> "${elapsed.years}y ${elapsed.months}mo"
+    elapsed.months > 0 -> "${elapsed.months}mo"
+    else -> null
+}
+
+fun buildHeroMainText(elapsed: HeroElapsed): CharSequence {
+    val builder = SpannableStringBuilder()
+    if (elapsed.days > 0 || elapsed.years > 0 || elapsed.months > 0) {
+        builder.append(elapsed.days.toString()).append("d ")
+    }
+    builder.append(elapsed.hours.toString()).append("h ")
+    builder.append(String.format(Locale.US, "%02d", elapsed.minutes)).append('m')
+
+    val marginStart = builder.length
+    builder.append(' ')
+    builder.setSpan(
+        ScaleXSpan(SECONDS_MARGIN_SCALE),
+        marginStart,
+        marginStart + 1,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+
+    val secondsStart = builder.length
+    builder.append(String.format(Locale.US, "%02d", elapsed.seconds))
+    builder.setSpan(
+        SuperscriptSpan(),
+        secondsStart,
+        builder.length,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    builder.setSpan(
+        RelativeSizeSpan(SECONDS_SCALE),
+        marginStart,
+        builder.length,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    return builder
+}
+
 private fun unitPhrase(context: Context, value: Int, pluralRes: Int): String =
     context.resources.getQuantityString(pluralRes, value, value).trimEnd(',', ' ')
 
@@ -73,6 +116,6 @@ fun buildHeroA11y(context: Context, elapsed: HeroElapsed): String {
     return when (phrases.size) {
         1 -> phrases[0]
         2 -> "${phrases[0]} $and ${phrases[1]}"
-        else -> phrases.dropLast(1).joinToString(", ") + ", $and " + phrases.last()
+        else -> phrases.dropLast(1).joinToString(", ") + " $and " + phrases.last()
     }
 }
