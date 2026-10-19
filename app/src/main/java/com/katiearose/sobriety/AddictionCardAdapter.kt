@@ -26,6 +26,10 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+private const val AVERAGE_FADE_MILLIS = 200L
+private const val AVERAGE_AUTO_HIDE_MILLIS = 3000L
+private const val DISABLED_INFO_ALPHA = 0.4f
+
 class AddictionCardAdapter(
     private val context: Context,
     private val relapseButtonAction: (Addiction) -> Unit,
@@ -86,16 +90,7 @@ class AddictionCardAdapter(
         )
         val numAttempts = context.getSharedPref().getAverageAttemptsWindow()
         val averageRelapseDuration = addiction.calculateRecentAverage(numAttempts)
-        if (averageRelapseDuration == null) {
-            holder.textViewAverage.visibility = View.GONE
-        } else {
-            holder.textViewAverage.visibility = View.VISIBLE
-            holder.textViewAverage.text =
-                context.getString(
-                    R.string.recent_avg,
-                    context.convertSecondsToString(averageRelapseDuration / 1000L)
-                )
-        }
+        holder.bindAverage(averageRelapseDuration)
 
         holder.refresh()
     }
@@ -114,6 +109,11 @@ class AddictionCardAdapter(
     }
 
     override fun getItemCount() = Main.addictions.size
+
+    override fun onViewRecycled(holder: AddictionCardViewHolder) {
+        holder.resetAverage()
+        super.onViewRecycled(holder)
+    }
 
     class AddictionCardViewHolder(
         private val binding: CardAddictionBinding,
@@ -194,7 +194,60 @@ class AddictionCardAdapter(
             }
         }
 
+        private var averageShown = false
+        private val hideAverageRunnable = Runnable { hideAverage() }
+
+        fun bindAverage(averageDurationMillis: Long?) {
+            resetAverage()
+            if (averageDurationMillis == null) {
+                binding.imageInfo.isEnabled = false
+                binding.imageInfo.alpha = DISABLED_INFO_ALPHA
+            } else {
+                binding.imageInfo.isEnabled = true
+                binding.imageInfo.alpha = 1f
+                binding.textViewAverage.text = binding.root.context.getString(
+                    R.string.recent_avg,
+                    binding.root.context.convertSecondsToString(averageDurationMillis / 1000L)
+                )
+            }
+        }
+
+        fun resetAverage() {
+            averageShown = false
+            binding.textViewAverage.animate().cancel()
+            binding.textViewAverage.removeCallbacks(hideAverageRunnable)
+            binding.textViewAverage.alpha = 1f
+            binding.textViewAverage.visibility = View.GONE
+        }
+
+        private fun toggleAverage() {
+            if (!binding.imageInfo.isEnabled) return
+            if (averageShown) hideAverage() else showAverage()
+        }
+
+        private fun showAverage() {
+            averageShown = true
+            val view = binding.textViewAverage
+            view.animate().cancel()
+            view.removeCallbacks(hideAverageRunnable)
+            view.alpha = 0f
+            view.visibility = View.VISIBLE
+            view.animate().alpha(1f).setDuration(AVERAGE_FADE_MILLIS).start()
+            view.postDelayed(hideAverageRunnable, AVERAGE_AUTO_HIDE_MILLIS)
+        }
+
+        private fun hideAverage() {
+            averageShown = false
+            val view = binding.textViewAverage
+            view.animate().cancel()
+            view.removeCallbacks(hideAverageRunnable)
+            view.animate().alpha(0f).setDuration(AVERAGE_FADE_MILLIS).withEndAction {
+                if (!averageShown) view.visibility = View.GONE
+            }.start()
+        }
+
         init {
+            binding.imageInfo.setOnClickListener { toggleAverage() }
             binding.imageReset.setOnClickListener { relapseButtonAction(adapterPosition) }
             binding.imageStop.setOnClickListener { stopButtonAction(adapterPosition) }
             binding.imageTimeline.setOnClickListener { timelineButtonAction(adapterPosition) }

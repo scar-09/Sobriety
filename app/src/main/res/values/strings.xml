@@ -50,6 +50,7 @@
         <item quantity="other">%d seconds</item>
     </plurals>
     <string name="recent_avg">Recent Average: %s</string>
+    <string name="recent_average">Recent average</string>
     <string name="longest_streak">Longest streak</string>
     <string name="total_clean">Total clean time</string>
     <string name="delete">Delete</string>
