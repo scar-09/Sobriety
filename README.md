@@ -55,6 +55,8 @@ https://f-droid.org/packages/com.katiearose.sobriety/
 Credit for the original app, its design and years of work goes entirely to seaglade and
 the upstream contributors.
 
+See the upstream README's [Project Status](https://github.com/seaglade/Sobriety#project-status) section for an explanation of the situation.
+
 ## Building
 
 The project uses Gradle 7.5 and Android Gradle Plugin 7.3.1, which require JDK 17.
