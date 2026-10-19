@@ -9,13 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.databinding.CardAddictionBinding
 import com.katiearose.sobriety.shared.Addiction
 import com.katiearose.sobriety.utils.buildHeroA11y
-import com.katiearose.sobriety.utils.buildHeroText
+import com.katiearose.sobriety.utils.buildHeroMainText
+import com.katiearose.sobriety.utils.buildHeroTopText
 import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
 import com.katiearose.sobriety.utils.decomposeElapsed
@@ -29,6 +31,9 @@ import java.time.format.DateTimeFormatter
 private const val AVERAGE_FADE_MILLIS = 200L
 private const val AVERAGE_AUTO_HIDE_MILLIS = 3000L
 private const val DISABLED_INFO_ALPHA = 0.4f
+private const val HERO_TEXT_MIN_SP = 14
+private const val HERO_TEXT_MAX_SP = 27
+private const val HERO_TEXT_STEP_SP = 1
 
 class AddictionCardAdapter(
     private val context: Context,
@@ -149,11 +154,15 @@ class AddictionCardAdapter(
             when (addiction.status) {
                 Addiction.Status.Ongoing -> {
                     val elapsed = decomposeElapsed(addiction.history.keys.last(), now)
-                    binding.textViewTime.text = buildHeroText(elapsed)
+                    val topText = buildHeroTopText(elapsed)
+                    binding.textViewTop.text = topText
+                    binding.textViewTop.visibility = if (topText == null) View.GONE else View.VISIBLE
+                    binding.textViewTime.text = buildHeroMainText(elapsed)
                     binding.textViewTime.contentDescription = buildHeroA11y(context, elapsed)
                 }
 
                 Addiction.Status.Stopped -> {
+                    binding.textViewTop.visibility = View.GONE
                     binding.textViewTime.text = context.getString(
                         R.string.stop_notice,
                         getFormattedDate(addiction.history.values.last()),
@@ -163,6 +172,7 @@ class AddictionCardAdapter(
                 }
 
                 Addiction.Status.Future -> {
+                    binding.textViewTop.visibility = View.GONE
                     binding.textViewTime.text = context.getString(
                         R.string.time_until_tracked,
                         context.convertRangeToString(now, addiction.history.keys.last())
@@ -180,12 +190,28 @@ class AddictionCardAdapter(
 
         private fun applyStatusStyle(context: Context, isHero: Boolean) {
             if (isHero) {
+                binding.textViewTime.maxLines = 1
+                // Autosize derives its height budget from the wrap_content height measured at the
+                // current text size, so start at the max size or it can never grow above the
+                // previous (small) size.
                 binding.textViewTime.setTextSize(
-                    TypedValue.COMPLEX_UNIT_PX,
-                    context.resources.getDimension(R.dimen.text_size_hero)
+                    TypedValue.COMPLEX_UNIT_SP,
+                    HERO_TEXT_MAX_SP.toFloat()
+                )
+                TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    binding.textViewTime,
+                    HERO_TEXT_MIN_SP,
+                    HERO_TEXT_MAX_SP,
+                    HERO_TEXT_STEP_SP,
+                    TypedValue.COMPLEX_UNIT_SP
                 )
                 binding.textViewTime.setTypeface(null, Typeface.BOLD)
             } else {
+                TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                    binding.textViewTime,
+                    TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
+                )
+                binding.textViewTime.maxLines = Int.MAX_VALUE
                 binding.textViewTime.setTextSize(
                     TypedValue.COMPLEX_UNIT_PX,
                     context.resources.getDimension(R.dimen.text_size_small)

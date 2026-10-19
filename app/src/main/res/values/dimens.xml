@@ -4,6 +4,9 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="text_size_small">15sp</dimen>
     <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_priority">11.5sp</dimen>
     <dimen name="text_size_title">16sp</dimen>
-    <dimen name="text_size_hero">32sp</dimen>
+    <dimen name="text_size_hero_top">13.3sp</dimen>
+    <dimen name="text_size_hero">26.7sp</dimen>
+    <dimen name="hero_top_margin_bottom">4.5dp</dimen>
 </resources>
