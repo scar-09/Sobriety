@@ -12,7 +12,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:padding="16dp"
+        android:paddingTop="20dp"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="15dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -40,8 +43,8 @@
             android:textAllCaps="false"
             app:checkedIconVisible="false"
             app:chipMinHeight="26dp"
-            app:chipStartPadding="10.7dp"
-            app:chipEndPadding="10.7dp"
+            app:chipStartPadding="11dp"
+            app:chipEndPadding="11dp"
             app:ensureMinTouchTargetSize="true"
             tools:text="Priority: Medium"
             app:chipBackgroundColor="?attr/cardColor"
@@ -107,6 +110,8 @@
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/ic_info_glyph_24"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageMisc"
+            app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toBottomOf="@id/textViewAverage" />
 
         <ImageView
@@ -115,13 +120,13 @@
             android:layout_height="48dp"
             android:padding="13.5dp"
             android:background="@drawable/bg_card_action_circle"
-            android:layout_marginTop="10dp"
             android:contentDescription="@string/misc"
             android:tooltipText="@string/misc"
             app:tint="?attr/colorIconOnCard"
             android:src="@drawable/more_horiz_24px"
             app:layout_constraintStart_toEndOf="@id/imageInfo"
-            app:layout_constraintTop_toBottomOf="@id/textViewAverage" />
+            app:layout_constraintEnd_toStartOf="@id/imageTimeline"
+            app:layout_constraintTop_toTopOf="@id/imageInfo" />
 
         <ImageView
             android:id="@+id/imageReset"
@@ -132,6 +137,7 @@
             android:src="@drawable/ic_reset"
             android:contentDescription="@string/relapse"
             android:tooltipText="@string/relapse"
+            app:layout_constraintStart_toEndOf="@id/imageStop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/imageInfo"
             app:tint="?attr/colorIconOnCard" />
@@ -145,6 +151,7 @@
             android:src="@drawable/ic_baseline_stop_24"
             android:contentDescription="@string/stop"
             android:tooltipText="@string/stop"
+            app:layout_constraintStart_toEndOf="@id/imageTimeline"
             app:layout_constraintEnd_toStartOf="@id/imageReset"
             app:layout_constraintTop_toTopOf="@+id/imageInfo"
             app:tint="?attr/colorIconOnCard" />
@@ -158,6 +165,7 @@
             android:src="@drawable/ic_notes_lines_24"
             android:contentDescription="@string/timeline"
             android:tooltipText="@string/timeline"
+            app:layout_constraintStart_toEndOf="@id/imageMisc"
             app:layout_constraintEnd_toStartOf="@id/imageStop"
             app:layout_constraintTop_toTopOf="@+id/imageInfo"
             app:tint="?attr/colorIconOnCard" />
