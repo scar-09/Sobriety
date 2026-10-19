@@ -63,6 +63,8 @@
             android:id="@+id/textViewAverage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="center"
             tools:text="Average: 3d 20h 10m 5s"
             android:visibility="gone"
             android:textColor="?attr/colorTextOnCard"
