@@ -14,8 +14,11 @@ import com.google.android.material.chip.Chip
 import com.katiearose.sobriety.activities.Main
 import com.katiearose.sobriety.databinding.CardAddictionBinding
 import com.katiearose.sobriety.shared.Addiction
+import com.katiearose.sobriety.utils.buildHeroA11y
+import com.katiearose.sobriety.utils.buildHeroText
 import com.katiearose.sobriety.utils.convertRangeToString
 import com.katiearose.sobriety.utils.convertSecondsToString
+import com.katiearose.sobriety.utils.decomposeElapsed
 import com.katiearose.sobriety.utils.getDateFormatPattern
 import com.katiearose.sobriety.utils.getAverageAttemptsWindow
 import com.katiearose.sobriety.utils.getSharedPref
@@ -127,6 +130,7 @@ class AddictionCardAdapter(
         val textViewPriority: Chip = binding.textViewPriority
         val textViewAverage: TextView = binding.textViewAverage
         private lateinit var addiction: Addiction
+        private var lastAppliedStatus: Addiction.Status? = null
 
         fun refresh() {
             // A detached/recycled holder has no valid position; skip to avoid an index crash.
@@ -143,30 +147,53 @@ class AddictionCardAdapter(
 
         private fun displayInfo() {
             val context = binding.root.context
-            binding.textViewTime.text = when (addiction.status) {
-                Addiction.Status.Ongoing -> context.convertRangeToString(addiction.history.keys.last())
+            val now = Instant.now().toEpochMilli()
+            when (addiction.status) {
+                Addiction.Status.Ongoing -> {
+                    val elapsed = decomposeElapsed(addiction.history.keys.last(), now)
+                    binding.textViewTime.text = buildHeroText(elapsed)
+                    binding.textViewTime.contentDescription = buildHeroA11y(context, elapsed)
+                }
 
-                Addiction.Status.Stopped -> context.getString(
-                    R.string.stop_notice,
-                    getFormattedDate(addiction.history.values.last()),
-                    context.convertRangeToString(addiction.history.keys.last(), addiction.history.values.last())
-                )
+                Addiction.Status.Stopped -> {
+                    binding.textViewTime.text = context.getString(
+                        R.string.stop_notice,
+                        getFormattedDate(addiction.history.values.last()),
+                        context.convertRangeToString(addiction.history.keys.last(), addiction.history.values.last())
+                    )
+                    binding.textViewTime.contentDescription = null
+                }
 
-                Addiction.Status.Future -> context.getString(
-                    R.string.time_until_tracked,
-                    context.convertRangeToString(Instant.now().toEpochMilli(), addiction.history.keys.last())
-                )
+                Addiction.Status.Future -> {
+                    binding.textViewTime.text = context.getString(
+                        R.string.time_until_tracked,
+                        context.convertRangeToString(now, addiction.history.keys.last())
+                    )
+                    binding.textViewTime.contentDescription = null
+                }
             }
             // Only the live, ongoing streak is the "hero" metric. Stopped/Future use long
             // sentence strings, so they stay at the normal size to avoid awkward wrapping.
-            val isHero = addiction.status == Addiction.Status.Ongoing
-            binding.textViewTime.setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                context.resources.getDimension(
-                    if (isHero) R.dimen.text_size_hero else R.dimen.text_size_small
+            if (lastAppliedStatus != addiction.status) {
+                applyStatusStyle(context, addiction.status == Addiction.Status.Ongoing)
+                lastAppliedStatus = addiction.status
+            }
+        }
+
+        private fun applyStatusStyle(context: Context, isHero: Boolean) {
+            if (isHero) {
+                binding.textViewTime.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    context.resources.getDimension(R.dimen.text_size_hero)
                 )
-            )
-            binding.textViewTime.setTypeface(null, if (isHero) Typeface.BOLD else Typeface.NORMAL)
+                binding.textViewTime.setTypeface(null, Typeface.BOLD)
+            } else {
+                binding.textViewTime.setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    context.resources.getDimension(R.dimen.text_size_small)
+                )
+                binding.textViewTime.setTypeface(null, Typeface.NORMAL)
+            }
         }
 
         init {
