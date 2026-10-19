@@ -170,19 +170,7 @@ class Main : AppCompatActivity() {
         updatePromptVisibility()
 
         //Create adapter, and layout manager for recyclerview and attach them
-        adapterAddictions = AddictionCardAdapter(this, deleteButtonAction =  {
-            val action: () -> Unit = {
-                adapterAddictions.notifyItemRemoved(addictions.indexOf(it))
-                addictions.remove(it)
-                updatePromptVisibility()
-                cacheHandler.write()
-            }
-            showConfirmDialog(
-                getString(R.string.delete),
-                getString(R.string.delete_confirm, it.name),
-                action
-            )
-        }, relapseButtonAction = {
+        adapterAddictions = AddictionCardAdapter(this, relapseButtonAction = {
             when (it.status) {
                 Addiction.Status.Ongoing ->
                     showConfirmDialog(
@@ -286,6 +274,20 @@ class Main : AppCompatActivity() {
             dialogViewBinding.renameAddiction.setOnClickListener {
                 dialog.dismiss()
                 showRenameDialog(a)
+            }
+            dialogViewBinding.deleteAddiction.setOnClickListener {
+                dialog.dismiss()
+                val action: () -> Unit = {
+                    adapterAddictions.notifyItemRemoved(addictions.indexOf(a))
+                    addictions.remove(a)
+                    updatePromptVisibility()
+                    cacheHandler.write()
+                }
+                showConfirmDialog(
+                    getString(R.string.delete),
+                    getString(R.string.delete_confirm, a.name),
+                    action
+                )
             }
             dialog.setContentView(dialogViewBinding.root)
             dialog.show()

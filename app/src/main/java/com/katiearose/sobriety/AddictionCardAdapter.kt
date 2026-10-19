@@ -28,7 +28,6 @@ import java.time.format.DateTimeFormatter
 
 class AddictionCardAdapter(
     private val context: Context,
-    private val deleteButtonAction: (Addiction) -> Unit,
     private val relapseButtonAction: (Addiction) -> Unit,
     private val stopButtonAction: (Addiction) -> Unit,
     private val timelineButtonAction: (Addiction) -> Unit,
@@ -50,7 +49,6 @@ class AddictionCardAdapter(
         val binding =
             CardAddictionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AddictionCardViewHolder(binding,
-            { deleteButtonAction(Main.addictions[it]) },
             { relapseButtonAction(Main.addictions[it]) },
             { stopButtonAction(Main.addictions[it]) },
             { timelineButtonAction(Main.addictions[it]) },
@@ -118,7 +116,7 @@ class AddictionCardAdapter(
     override fun getItemCount() = Main.addictions.size
 
     class AddictionCardViewHolder(
-        private val binding: CardAddictionBinding, deleteButtonAction: (Int) -> Unit,
+        private val binding: CardAddictionBinding,
         relapseButtonAction: (Int) -> Unit,
         stopButtonAction: (Int) -> Unit,
         timelineButtonAction: (Int) -> Unit,
@@ -197,7 +195,6 @@ class AddictionCardAdapter(
         }
 
         init {
-            binding.imageDelete.setOnClickListener { deleteButtonAction(adapterPosition) }
             binding.imageReset.setOnClickListener { relapseButtonAction(adapterPosition) }
             binding.imageStop.setOnClickListener { stopButtonAction(adapterPosition) }
             binding.imageTimeline.setOnClickListener { timelineButtonAction(adapterPosition) }
