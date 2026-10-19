@@ -15,12 +15,19 @@ contributors. The original app's maintainer confirmed in
 that she can't publish new builds, so this fork provides them — signed APKs are
 published on the [Releases page](https://github.com/scar-09/Sobriety/releases).
 
-*Last updated: 18 October 2026*
+*Last updated: 19 October 2026*
 
 ## What this fork adds
 
 - **Log a relapse at a previous date/time** instead of only "now"
 - **Rename addictions** at any time
+- **Hero streak timer**: the ongoing streak is the big number on each card, shown in a
+  compact format (e.g. `5d 0:04` with superscript seconds) and with a full spoken phrase
+  for screen readers
+- **Peek the recent average**: tap the ⓘ icon on a card to show the recent average for a
+  few seconds — tap again to hide it early
+- **Delete lives in Miscellaneous**: removing an addiction moved off the card into the
+  ··· menu, so it can't be tapped by accident
 - **Multiple daily notes per day**, grouped by day with collapse/expand
 - **Search** across daily notes
 - **Summary insights**: longest streak and total clean time
