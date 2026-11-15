@@ -143,16 +143,12 @@ class Main : AppCompatActivity() {
         if (addictions.isEmpty()) {
             try {
                 this.openFileInput("Sobriety.cache").use {
-                    val loaded = cacheHandler.readCache(it)
-                    if (loaded.isEmpty()) {
-                        // Cache may be corrupt/empty. Try the upgrade backup before giving up.
-                        val restored = cacheHandler.readBackup()
-                        if (restored != null) {
-                            addictions.addAll(restored)
-                        } else {
-                        }
-                    } else {
+                    val loaded = cacheHandler.readCacheOrNull(it)
+                    if (loaded != null) {
                         addictions.addAll(loaded)
+                    } else {
+                        // Cache may be corrupt. Try the upgrade backup before giving up.
+                        cacheHandler.readBackup()?.let { addictions.addAll(it) }
                     }
                 }
             } catch (e: FileNotFoundException) {

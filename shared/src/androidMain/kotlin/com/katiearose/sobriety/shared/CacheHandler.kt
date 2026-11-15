@@ -16,18 +16,21 @@ class CacheHandler(private val context: Context) {
         private val listSerializer = ListSerializer(AddictionSerializer)
     }
 
-    fun readCache(input: InputStream): List<Addiction> {
+    fun readCache(input: InputStream): List<Addiction> =
+        readCacheOrNull(input) ?: emptyList()
+
+    fun readCacheOrNull(input: InputStream): List<Addiction>? {
         BufferedInputStream(input).use { stream ->
             val text = try {
                 Scanner(stream).useDelimiter("\\A").use { if (it.hasNext()) it.next() else "" }
             } catch (e: Exception) {
-                return emptyList()
+                return null
             }
-            if (text.isBlank()) return emptyList()
+            if (text.isBlank()) return null
             return try {
-                JsonSerializer.decodeFromString(text)
+                JsonSerializer.decodeFromString<List<Addiction>>(text)
             } catch (e: Exception) {
-                emptyList()
+                null
             }
         }
     }
