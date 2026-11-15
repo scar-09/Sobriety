@@ -14,7 +14,7 @@ maintainer confirmed in
 [this PR thread](https://github.com/seaglade/Sobriety/pull/118#issuecomment-6249704536)
 that she can no longer publish builds, so this fork provides signed releases.
 
-*Last updated: 21 October 2026 · current version: v10.1.1 (versionCode 24)*
+*Last updated: 15 November 2026 · current version: v10.1.2 (versionCode 25)*
 
 ## Features
 
@@ -72,7 +72,7 @@ Gradle produces the release APK **unsigned**. Sign it with `zipalign` and
 
 ```powershell
 $bt = "$env:ANDROID_HOME\build-tools\35.0.0"
-& "$bt\zipalign.exe" -p -f 4 "app\build\outputs\apk\release\Sobriety v10.1.1-release-unsigned.apk" aligned.apk
+& "$bt\zipalign.exe" -p -f 4 "app\build\outputs\apk\release\Sobriety v10.1.2-release-unsigned.apk" aligned.apk
 & "$bt\apksigner.bat" sign --ks your-key.jks --ks-key-alias your-alias --out signed.apk aligned.apk
 & "$bt\apksigner.bat" verify --print-certs signed.apk
 ```
